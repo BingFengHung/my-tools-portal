@@ -333,7 +333,7 @@ function renderGrid(projects) {
         </div>
         <p class="card-desc">${project.desc}</p>
         <div class="card-actions">
-          <a href="${project.url}" class="action-btn play-btn">開啟工具</a>
+          <a href="${project.url}" target="_blank" class="action-btn play-btn">開啟工具</a>
           <button class="action-btn qr-btn" data-url="${project.url}">QR Code</button>
         </div>
       `;
@@ -348,6 +348,7 @@ function renderGrid(projects) {
       const card = document.createElement('a');
       card.className = 'icon-app-card';
       card.href = project.url;
+      card.target = '_blank';
       card.style.setProperty('--card-glow', project.color);
       
       card.innerHTML = `
