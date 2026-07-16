@@ -174,8 +174,9 @@ modalClose.addEventListener('click', () => pwaModal.style.display = 'none');
 
 // Refresh App Caches
 refreshBtn.addEventListener('click', async () => {
-  showToast('正在清除快取並重新載入...');
+  showToast('正在強制清除快取並更新...');
   
+  // 1. Unregister service workers
   if ('serviceWorker' in navigator) {
     try {
       const registrations = await navigator.serviceWorker.getRegistrations();
@@ -187,6 +188,7 @@ refreshBtn.addEventListener('click', async () => {
     }
   }
   
+  // 2. Clear Cache Storage
   if ('caches' in window) {
     try {
       const keys = await caches.keys();
@@ -198,10 +200,35 @@ refreshBtn.addEventListener('click', async () => {
     }
   }
   
-  // Clear API cache
+  // 3. Clear API cache
   localStorage.removeItem('github_repos_cache');
   localStorage.removeItem('github_repos_cache_time');
   
+  // 4. Clear cookies
+  try {
+    const cookies = document.cookie.split(";");
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i];
+      const eqPos = cookie.indexOf("=");
+      const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+      document.cookie = name.trim() + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
+    }
+  } catch (e) {
+    console.error(e);
+  }
+
+  // 5. Force HTTP Cache Refresh by fetching main files with cache: 'reload'
+  try {
+    await Promise.all([
+      fetch('./index.html?cb=' + Date.now(), { cache: 'reload' }),
+      fetch('./app.js?cb=' + Date.now(), { cache: 'reload' }),
+      fetch('./style.css?cb=' + Date.now(), { cache: 'reload' })
+    ]);
+  } catch (e) {
+    console.warn('HTTP cache reload prefetch failed', e);
+  }
+  
+  // 6. Reload using a unique timestamp search parameter to bypass browser caching
   const url = new URL(window.location.href);
   url.searchParams.set('reload', Date.now().toString());
   window.location.href = url.toString();
@@ -906,16 +933,16 @@ const reportHTML = `
 
 openReportBtn.addEventListener('click', () => {
   reportContent.innerHTML = reportHTML;
-  reportModal.classList.add('active');
+  reportModal.style.display = 'flex';
 });
 
 reportClose.addEventListener('click', () => {
-  reportModal.classList.remove('active');
+  reportModal.style.display = 'none';
 });
 
 window.addEventListener('click', (e) => {
   if (e.target === reportModal) {
-    reportModal.classList.remove('active');
+    reportModal.style.display = 'none';
   }
 });
 
