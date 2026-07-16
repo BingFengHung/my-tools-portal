@@ -83,6 +83,13 @@ const CORE_APPS_METADATA = {
     desc: '隱私至上的個人記帳本。100% 離線運行保障最高數據安全，提供便捷的收支輸入與類別統計，內建 Canvas 繪製的圓餅圖與趨勢柱狀圖。',
     icon: '💵',
     color: '#64748b'
+  },
+  'network-utility': {
+    title: '網路工具箱',
+    subtitle: 'Pocket Network Utility',
+    desc: '個人網路連線診斷小助手。支援以 HTTP 測試多地節點的實時延遲（Ping）、查詢外網 IP 與網路運營商，並支援 Cloudflare DoH (DNS-over-HTTPS) 網域解析查詢。',
+    icon: '📡',
+    color: '#3b82f6'
   }
 };
 
