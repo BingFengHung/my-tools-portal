@@ -323,8 +323,8 @@ function renderGrid(projects) {
       
       card.innerHTML = `
         <div class="card-header">
-          <div class="card-icon" style="background: ${hexToRgba(project.color, 0.15)}; border-color: ${hexToRgba(project.color, 0.3)}; color: ${project.color};">
-            <span style="font-size: 1.8rem;">${project.icon}</span>
+          <div class="card-icon" style="background: ${hexToRgba(project.color, 0.05)}; border-color: ${hexToRgba(project.color, 0.2)}; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+            <img src="${project.url}icon.svg" style="width: 100%; height: 100%; object-fit: contain; border-radius: 8px;" onerror="this.onerror=null; this.outerHTML='<span style=&quot;font-size: 1.8rem; color: ${project.color};&quot;>${project.icon}</span>';">
           </div>
           <div class="card-title-group">
             <h3>${project.title}</h3>
@@ -352,8 +352,8 @@ function renderGrid(projects) {
       card.style.setProperty('--card-glow', project.color);
       
       card.innerHTML = `
-        <div class="icon-app-box" style="background: linear-gradient(135deg, ${hexToRgba(project.color, 0.25)}, ${hexToRgba(project.color, 0.05)}); border-color: ${hexToRgba(project.color, 0.35)};">
-          <span style="font-size: 2.2rem; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));">${project.icon}</span>
+        <div class="icon-app-box" style="background: linear-gradient(135deg, ${hexToRgba(project.color, 0.25)}, ${hexToRgba(project.color, 0.05)}); border-color: ${hexToRgba(project.color, 0.35)}; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+          <img src="${project.url}icon.svg" style="width: 100%; height: 100%; object-fit: contain; border-radius: 16px;" onerror="this.onerror=null; this.outerHTML='<span style=&quot;font-size: 2.2rem; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));&quot;>${project.icon}</span>';">
         </div>
         <span class="icon-app-title">${project.title}</span>
       `;
