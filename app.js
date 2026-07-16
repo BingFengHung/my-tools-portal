@@ -8,13 +8,49 @@ if ('serviceWorker' in navigator) {
 }
 
 // Global State
-let allRepos = [];
+let allProjects = [];
 const GITHUB_USERNAME = 'BingFengHung';
-const CORE_APPS = [
-  'bg-remover-compressor',
-  'bubble-level-tool',
-  'decision-wheel',
-  'white-noise-timer'
+
+// Core Metadata for Featured Apps
+const CORE_APPS_METADATA = {
+  'bg-remover-compressor': {
+    title: '影壓去背',
+    subtitle: 'Image Compressor & BG Remover',
+    desc: '本機圖片壓縮與去背工具，支援色彩選取與橡皮擦，100% 隱私安全，完全離線運作。',
+    icon: '📸',
+    color: '#e94057'
+  },
+  'bubble-level-tool': {
+    title: '行動水平儀',
+    subtitle: 'Bubble Level & Clinometer',
+    desc: '利用手機內建的陀螺儀與加速規，支援雙軸水平偵測與數值校準，提供直覺的水平泡泡顯示。',
+    icon: '⚖️',
+    color: '#10b981'
+  },
+  'decision-wheel': {
+    title: '聚會決定輪盤',
+    subtitle: 'Interactive Decision Wheel',
+    desc: '聚會抽籤與點餐抉擇神器，支援自訂項目與多種內建主題範本，內建物理阻尼旋轉與音效。',
+    icon: '🎲',
+    color: '#ff9f43'
+  },
+  'white-noise-timer': {
+    title: '專注白噪音',
+    subtitle: 'Ambient Sound & Focus Timer',
+    desc: '結合番茄鐘與白噪音混音器，提供雨聲、海浪、篝火等多款環境音，助您進入專注或好眠狀態。',
+    icon: '🎵',
+    color: '#00b4d8'
+  }
+};
+
+// Generic Color Palette for other projects
+const THEME_COLORS = [
+  '#6366f1', // Indigo
+  '#a855f7', // Purple
+  '#ec4899', // Pink
+  '#3b82f6', // Blue
+  '#14b8a6', // Teal
+  '#f59e0b'  // Amber
 ];
 
 // DOM Elements
@@ -25,7 +61,7 @@ const modalClose = document.getElementById('modal-close');
 const toastMsg = document.getElementById('toast-msg');
 
 const loadingState = document.getElementById('loading-state');
-const repoList = document.getElementById('repo-list');
+const toolsGrid = document.getElementById('tools-grid');
 const emptyState = document.getElementById('empty-state');
 const searchInput = document.getElementById('search-input');
 
@@ -34,7 +70,7 @@ const qrClose = document.getElementById('qr-close');
 const qrImage = document.getElementById('qr-image');
 const qrText = document.getElementById('qr-text');
 
-// 1. PWA Installation Handling
+// PWA Install Prompt
 let deferredPrompt;
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
@@ -62,7 +98,7 @@ installBtn.addEventListener('click', () => {
 
 modalClose.addEventListener('click', () => pwaModal.style.display = 'none');
 
-// 2. Clear Cache & Refresh
+// Refresh App Caches
 refreshBtn.addEventListener('click', async () => {
   showToast('正在清除快取並重新載入...');
   
@@ -106,15 +142,16 @@ function showToast(msg) {
   }, 2500);
 }
 
-// 3. QR Code Modal Handling
-document.querySelectorAll('.qr-btn').forEach(btn => {
-  btn.addEventListener('click', (e) => {
-    const url = e.target.dataset.url;
-    openQRModal(url);
+// QR Code Modal Handling
+function initQRActions() {
+  document.querySelectorAll('.qr-btn').forEach(btn => {
+    btn.removeEventListener('click', handleQRClick);
+    btn.addEventListener('click', handleQRClick);
   });
-});
+}
 
-function openQRModal(url) {
+function handleQRClick(e) {
+  const url = e.target.dataset.url;
   qrImage.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(url)}`;
   qrText.textContent = url;
   qrModal.style.display = 'flex';
@@ -125,7 +162,6 @@ qrClose.addEventListener('click', () => {
   qrImage.src = '';
 });
 
-// Close modals when clicking outside
 window.addEventListener('click', (e) => {
   if (e.target === pwaModal) pwaModal.style.display = 'none';
   if (e.target === qrModal) {
@@ -134,8 +170,8 @@ window.addEventListener('click', (e) => {
   }
 });
 
-// 4. Fetch GitHub Repositories
-async function loadRepositories() {
+// Fetch and Render Repositories
+async function loadProjects() {
   const cacheKey = 'github_repos_cache';
   const cacheTimeKey = 'github_repos_cache_time';
   const cacheDuration = 10 * 60 * 1000; // 10 minutes cache
@@ -144,103 +180,164 @@ async function loadRepositories() {
   const cachedTime = localStorage.getItem(cacheTimeKey);
   
   if (cachedData && cachedTime && (Date.now() - cachedTime < cacheDuration)) {
-    console.log('Loading repositories from localStorage cache');
-    allRepos = JSON.parse(cachedData);
-    renderRepos(allRepos);
+    console.log('Loading projects from localStorage cache');
+    processAndRender(JSON.parse(cachedData));
     return;
   }
   
   try {
     const res = await fetch(`https://api.github.com/users/${GITHUB_USERNAME}/repos?per_page=100&sort=updated`);
-    if (!res.ok) throw new Error('GitHub API rate limit or error');
-    const data = await res.json();
+    if (!res.ok) throw new Error('GitHub API Error');
+    const repos = await res.json();
     
-    // Filter repositories:
-    // 1. Must have Pages enabled (or check if we can estimate)
-    // 2. Cannot be the portal project itself ('my-tools-portal')
-    // 3. Cannot be one of the core featured apps
-    allRepos = data.filter(repo => {
-      const name = repo.name.toLowerCase();
-      const isPortal = name === 'my-tools-portal' || name === 'github-pages-portal';
-      const isCore = CORE_APPS.includes(name);
-      return (repo.has_pages || repo.homepage) && !isPortal && !isCore;
-    });
-    
-    // Store in cache
-    localStorage.setItem(cacheKey, JSON.stringify(allRepos));
+    // Cache raw response
+    localStorage.setItem(cacheKey, JSON.stringify(repos));
     localStorage.setItem(cacheTimeKey, Date.now().toString());
     
-    renderRepos(allRepos);
+    processAndRender(repos);
   } catch (err) {
-    console.warn('Failed to fetch from GitHub API, falling back to cached local storage data if available.', err);
+    console.warn('Failed to fetch from GitHub API, using fallback data.', err);
     if (cachedData) {
-      allRepos = JSON.parse(cachedData);
-      renderRepos(allRepos);
+      processAndRender(JSON.parse(cachedData));
       showToast('載入 API 失敗，使用先前快取資料。');
     } else {
-      // Show empty or error state
-      loadingState.style.display = 'none';
-      emptyState.style.display = 'block';
-      emptyState.querySelector('p').textContent = '載入專案清單失敗。請確認您的網路連線，或稍後再試！';
+      // Offline fallback: At least show the 4 core apps since we have local metadata!
+      console.log('No cache found. Showing core apps as fallback.');
+      const fallbackRepos = Object.keys(CORE_APPS_METADATA).map(name => ({
+        name: name,
+        has_pages: true,
+        homepage: `https://${GITHUB_USERNAME}.github.io/${name}/`
+      }));
+      processAndRender(fallbackRepos);
+      showToast('無法連接伺服器，已載入預置核心工具。');
     }
   }
 }
 
-// 5. Render Repos to Grid
-function renderRepos(repos) {
+function processAndRender(repos) {
   loadingState.style.display = 'none';
   
-  if (repos.length === 0) {
-    repoList.style.display = 'none';
+  // Filter repos: Pages must be enabled, and not portal itself
+  const filteredRepos = repos.filter(repo => {
+    const name = repo.name.toLowerCase();
+    const isPortal = name === 'my-tools-portal' || name === 'github-pages-portal';
+    return (repo.has_pages || repo.homepage) && !isPortal;
+  });
+  
+  // Build standard project object with title, desc, icon, url, color
+  allProjects = filteredRepos.map((repo, idx) => {
+    const name = repo.name.toLowerCase();
+    const pagesUrl = repo.homepage || `https://${GITHUB_USERNAME}.github.io/${repo.name}/`;
+    
+    // If it's one of our core apps, use the beautiful custom metadata
+    if (CORE_APPS_METADATA[name]) {
+      return {
+        name: repo.name,
+        url: pagesUrl,
+        ...CORE_APPS_METADATA[name],
+        isCore: true
+      };
+    }
+    
+    // Otherwise, generate metadata dynamically
+    const lang = repo.language || 'Web';
+    let icon = '📁';
+    if (lang === 'JavaScript' || lang === 'HTML' || lang === 'CSS') icon = '💻';
+    else if (lang === 'Python') icon = '🐍';
+    else if (lang === 'TypeScript') icon = '⚡';
+    else if (lang === 'Vue' || lang === 'React') icon = '⚛️';
+    
+    // Choose theme color based on index
+    const color = THEME_COLORS[idx % THEME_COLORS.length];
+    
+    return {
+      name: repo.name,
+      title: repo.name.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
+      subtitle: `${lang} Project`,
+      desc: repo.description || '由 GitHub Pages 託管的個人網頁專案，提供高質感的使用體驗。',
+      icon: icon,
+      color: color,
+      url: pagesUrl,
+      isCore: false
+    };
+  });
+  
+  // Sort projects: Core apps first, then others
+  allProjects.sort((a, b) => {
+    if (a.isCore && !b.isCore) return -1;
+    if (!a.isCore && b.isCore) return 1;
+    return 0;
+  });
+  
+  renderGrid(allProjects);
+}
+
+function renderGrid(projects) {
+  if (projects.length === 0) {
+    toolsGrid.style.display = 'none';
     emptyState.style.display = 'block';
     return;
   }
   
   emptyState.style.display = 'none';
-  repoList.style.display = 'grid';
-  repoList.innerHTML = '';
+  toolsGrid.style.display = 'grid';
+  toolsGrid.innerHTML = '';
   
-  repos.forEach(repo => {
+  projects.forEach(project => {
     const card = document.createElement('div');
-    card.className = 'repo-card';
-    
-    const pagesUrl = repo.homepage || `https://${GITHUB_USERNAME}.github.io/${repo.name}/`;
-    const language = repo.language || 'Web';
-    const stars = repo.stargazers_count;
+    card.className = 'core-card';
+    card.style.setProperty('--card-glow', project.color);
     
     card.innerHTML = `
-      <div class="repo-header">
-        <h4>${repo.name}</h4>
+      <div class="card-header">
+        <div class="card-icon" style="background: ${hexToRgba(project.color, 0.15)}; border-color: ${hexToRgba(project.color, 0.3)}; color: ${project.color};">
+          <span style="font-size: 1.8rem;">${project.icon}</span>
+        </div>
+        <div class="card-title-group">
+          <h3>${project.title}</h3>
+          <p>${project.subtitle}</p>
+        </div>
       </div>
-      <div class="repo-lang-row">
-        <span class="repo-badge">
-          <span class="repo-lang-dot"></span>
-          ${language}
-        </span>
-        <span class="repo-stars">⭐ ${stars}</span>
-      </div>
-      <div class="repo-actions">
-        <a href="${pagesUrl}" target="_blank" class="repo-btn repo-btn-pages">開啟網頁</a>
-        <a href="${repo.html_url}" target="_blank" class="repo-btn repo-btn-github">GitHub</a>
+      <p class="card-desc">${project.desc}</p>
+      <div class="card-actions">
+        <a href="${project.url}" class="action-btn play-btn">開啟工具</a>
+        <button class="action-btn qr-btn" data-url="${project.url}">QR Code</button>
       </div>
     `;
     
-    repoList.appendChild(card);
+    toolsGrid.appendChild(card);
   });
+  
+  initQRActions();
 }
 
-// 6. Search Filter
+// Search Filtering
 searchInput.addEventListener('input', (e) => {
   const query = e.target.value.toLowerCase().trim();
-  const filtered = allRepos.filter(repo => {
-    return repo.name.toLowerCase().includes(query) || 
-           (repo.description && repo.description.toLowerCase().includes(query)) ||
-           (repo.language && repo.language.toLowerCase().includes(query));
+  const filtered = allProjects.filter(p => {
+    return p.title.toLowerCase().includes(query) ||
+           p.subtitle.toLowerCase().includes(query) ||
+           p.desc.toLowerCase().includes(query) ||
+           p.name.toLowerCase().includes(query);
   });
-  renderRepos(filtered);
+  renderGrid(filtered);
 });
 
-// Initialize load
+// Helper: Hex to RGBA conversion
+function hexToRgba(hex, alpha) {
+  let c;
+  if (/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)) {
+    c = hex.substring(1).split('');
+    if (c.length === 3) {
+      c = [c[0], c[0], c[1], c[1], c[2], c[2]];
+    }
+    c = '0x' + c.join('');
+    return `rgba(${(c >> 16) & 255}, ${(c >> 8) & 255}, ${c & 255}, ${alpha})`;
+  }
+  return `rgba(255, 255, 255, ${alpha})`;
+}
+
+// Initial Load
 window.addEventListener('load', () => {
-  loadRepositories();
+  loadProjects();
 });

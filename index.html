@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>WebHub - 我的 GitHub Pages 工具箱</title>
   
-  <!-- PWA & iOS Specifc Meta Tags -->
+  <!-- PWA & iOS Specific Meta Tags -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="WebHub">
@@ -39,104 +39,27 @@
   </header>
 
   <main>
-    <!-- Core Applications Grid -->
-    <section class="section-container">
-      <h2 class="section-title">✨ 核心工具集 <span>Core Apps</span></h2>
-      <div class="core-grid">
-        
-        <!-- App 1: bg-remover-compressor -->
-        <div class="core-card" style="--card-glow: #e94057;">
-          <div class="card-header">
-            <div class="card-icon" style="background: rgba(233, 64, 87, 0.15); border-color: rgba(233, 64, 87, 0.3);">
-              <span style="font-size: 1.8rem;">📸</span>
-            </div>
-            <div class="card-title-group">
-              <h3>影壓去背</h3>
-              <p>Image Compressor & BG Remover</p>
-            </div>
-          </div>
-          <p class="card-desc">本機圖片壓縮與去背工具，支援色彩選取與橡皮擦，100% 隱私安全，完全離線運作。</p>
-          <div class="card-actions">
-            <a href="https://BingFengHung.github.io/bg-remover-compressor/" class="action-btn play-btn">開啟工具</a>
-            <button class="action-btn qr-btn" data-url="https://BingFengHung.github.io/bg-remover-compressor/">QR Code</button>
-          </div>
-        </div>
-
-        <!-- App 2: bubble-level-tool -->
-        <div class="core-card" style="--card-glow: #10b981;">
-          <div class="card-header">
-            <div class="card-icon" style="background: rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.3);">
-              <span style="font-size: 1.8rem;">⚖️</span>
-            </div>
-            <div class="card-title-group">
-              <h3>行動水平儀</h3>
-              <p>Bubble Level & Clinometer</p>
-            </div>
-          </div>
-          <p class="card-desc">利用手機內建的陀螺儀與加速規，支援雙軸水平偵測與數值校準，提供直覺的水平泡泡顯示。</p>
-          <div class="card-actions">
-            <a href="https://BingFengHung.github.io/bubble-level-tool/" class="action-btn play-btn">開啟工具</a>
-            <button class="action-btn qr-btn" data-url="https://BingFengHung.github.io/bubble-level-tool/">QR Code</button>
-          </div>
-        </div>
-
-        <!-- App 3: decision-wheel -->
-        <div class="core-card" style="--card-glow: #ff9f43;">
-          <div class="card-header">
-            <div class="card-icon" style="background: rgba(255, 159, 67, 0.15); border-color: rgba(255, 159, 67, 0.3);">
-              <span style="font-size: 1.8rem;">🎲</span>
-            </div>
-            <div class="card-title-group">
-              <h3>聚會決定輪盤</h3>
-              <p>Interactive Decision Wheel</p>
-            </div>
-          </div>
-          <p class="card-desc">聚會抽籤與點餐抉擇神器，支援自訂項目與多種內建主題範本，內建物理阻尼旋轉與音效。</p>
-          <div class="card-actions">
-            <a href="https://BingFengHung.github.io/decision-wheel/" class="action-btn play-btn">開啟工具</a>
-            <button class="action-btn qr-btn" data-url="https://BingFengHung.github.io/decision-wheel/">QR Code</button>
-          </div>
-        </div>
-
-        <!-- App 4: white-noise-timer -->
-        <div class="core-card" style="--card-glow: #00b4d8;">
-          <div class="card-header">
-            <div class="card-icon" style="background: rgba(0, 180, 216, 0.15); border-color: rgba(0, 180, 216, 0.3);">
-              <span style="font-size: 1.8rem;">🎵</span>
-            </div>
-            <div class="card-title-group">
-              <h3>專注白噪音</h3>
-              <p>Ambient Sound & Focus Timer</p>
-            </div>
-          </div>
-          <p class="card-desc">結合番茄鐘與白噪音混音器，提供雨聲、海浪、篝火等多款環境音，助您進入專注或好眠狀態。</p>
-          <div class="card-actions">
-            <a href="https://BingFengHung.github.io/white-noise-timer/" class="action-btn play-btn">開啟工具</a>
-            <button class="action-btn qr-btn" data-url="https://BingFengHung.github.io/white-noise-timer/">QR Code</button>
-          </div>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- Dynamic Repositories Section -->
     <section class="section-container">
       <div class="section-header-row">
-        <h2 class="section-title">📂 其他 Pages 專案 <span>All GitHub Pages</span></h2>
+        <h2 class="section-title">✨ 我的線上工具箱 <span>My Tool Suite</span></h2>
         <div class="search-wrapper">
           <input type="text" id="search-input" placeholder="搜尋專案名稱...">
           <span class="search-icon">🔍</span>
         </div>
       </div>
+
       <div id="loading-state" class="loading-container">
         <div class="spinner"></div>
         <p>正在載入 GitHub Pages 專案...</p>
       </div>
-      <div id="repo-list" class="repo-grid" style="display: none;">
-        <!-- Loaded dynamically from API -->
+
+      <!-- Combined Grid for ALL Tools with the same high-quality card layout -->
+      <div id="tools-grid" class="core-grid" style="display: none;">
+        <!-- Both core and fetched projects will be rendered here dynamically -->
       </div>
+
       <div id="empty-state" class="empty-container" style="display: none;">
-        <p>沒有找到符合的 GitHub Pages 專案</p>
+        <p>沒有找到符合的專案</p>
       </div>
     </section>
   </main>
