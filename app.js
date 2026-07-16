@@ -17,30 +17,72 @@ const CORE_APPS_METADATA = {
   'bg-remover-compressor': {
     title: '影壓去背',
     subtitle: 'Image Compressor & BG Remover',
-    desc: '本機圖片壓縮與去背工具，支援色彩選取與橡皮擦，100% 隱私安全，完全離線運作。',
+    desc: '離線圖片處理工具。支援基於色彩容差的魔術棒去背、手動橡皮擦微調，以及無損與有損圖片壓縮，100% 本地運行不洩露隱私。',
     icon: '📸',
     color: '#e94057'
   },
   'bubble-level-tool': {
     title: '行動水平儀',
     subtitle: 'Bubble Level & Clinometer',
-    desc: '利用手機內建的陀螺儀與加速規，支援雙軸水平偵測與數值校準，提供直覺的水平泡泡顯示。',
+    desc: '高精度水平與傾斜度測量儀。調用手機陀螺儀與加速規，提供管狀與圓形雙軸氣泡視覺反光，支援基準線校準與數值鎖定。',
     icon: '⚖️',
     color: '#10b981'
   },
   'decision-wheel': {
     title: '聚會決定輪盤',
     subtitle: 'Interactive Decision Wheel',
-    desc: '聚會抽籤與點餐抉擇神器，支援自訂項目與多種內建主題範本，內建物理阻尼旋轉與音效。',
+    desc: '聚會抉擇抽籤神器。支援午餐、真心話等預置範本與自訂選項，具備模擬物理阻尼的逼真旋轉、指針音效與獲勝彈窗。',
     icon: '🎲',
     color: '#ff9f43'
   },
   'white-noise-timer': {
     title: '專注白噪音',
     subtitle: 'Ambient Sound & Focus Timer',
-    desc: '結合番茄鐘與白噪音混音器，提供雨聲、海浪、篝火等多款環境音，助您進入專注或好眠狀態。',
+    desc: '番茄鐘與環境白噪音混音器。內建雨聲、海浪、篝火、風聲等自然音軌，支援多音軌自訂混音音量與背景播放。',
     icon: '🎵',
     color: '#00b4d8'
+  },
+  'pixel-studio': {
+    title: '像素繪圖工坊',
+    subtitle: 'Pixel Art & GIF Studio',
+    desc: '專業像素畫與動態表情包製作器。支援 16-64 像素網格、自訂色盤與填色工具，具備畫格時間軸，可匯出動態 GIF 或雪碧圖 (Sprite Sheet)。',
+    icon: '🎨',
+    color: '#a855f7'
+  },
+  'pocket-synth': {
+    title: '隨身合成器與鼓機',
+    subtitle: 'Synthesizer & Sequencer',
+    desc: '行動電子音樂工作站。包含多音階虛擬琴鍵、ADSR 振幅包絡控制器與 16 步進鼓機音序器，支援 Canvas 即時動態波形示波器。',
+    icon: '🎹',
+    color: '#6366f1'
+  },
+  'card-wallet': {
+    title: '行動條碼卡包',
+    subtitle: 'Mobile Card Wallet',
+    desc: '個人電子卡夾與發票載具條碼整理器。支援掃碼讀取或輸入卡號生成一維碼 (Code128) 與二維碼 (QR)，可鎖定螢幕常亮與極大化亮度感應。',
+    icon: '💳',
+    color: '#14b8a6'
+  },
+  'retro-gameboy': {
+    title: '復古掌上遊戲機',
+    subtitle: 'Retro Gameboy Simulator',
+    desc: '懷舊掌機模擬器。以經典 Gameboy 實體按鈕蒙皮包裝，內建俄羅斯方塊、貪食蛇與打磚塊遊戲，點擊按鈕具備震動觸覺回饋與 8-bit 音效。',
+    icon: '🕹️',
+    color: '#ec4899'
+  },
+  'zen-sketch': {
+    title: '禪意手寫板',
+    subtitle: 'Zen Sketch Canvas',
+    desc: '順滑的隨手塗鴉與心智圖繪圖板。支援 PointerEvents 畫筆壓感與雙指縮放拖拉，具備智慧幾何圖形辨識修正，可導出無背景透明 PNG。',
+    icon: '📝',
+    color: '#f59e0b'
+  },
+  'micro-ledger': {
+    title: '隱私發票記帳本',
+    subtitle: 'Micro Ledger & Charts',
+    desc: '隱私至上的個人記帳本。100% 離線運行保障最高數據安全，提供便捷的收支輸入與類別統計，內建 Canvas 繪製的圓餅圖與趨勢柱狀圖。',
+    icon: '💵',
+    color: '#64748b'
   }
 };
 
