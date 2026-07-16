@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0b132b;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#1c2541;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0b0c10;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="glowGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#6f00ff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#00b4d8;stop-opacity:1" />
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="12" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+  <rect width="512" height="512" rx="128" fill="url(#bgGrad)"/>
+  
+  <!-- Outer glowing orbital path -->
+  <circle cx="256" cy="256" r="190" fill="none" stroke="url(#glowGrad)" stroke-width="4" filter="url(#glow)" opacity="0.6"/>
+  <circle cx="256" cy="256" r="190" fill="none" stroke="#00f2fe" stroke-width="2" opacity="0.3"/>
+
+  <!-- Portal Grid Layout of Apps -->
+  <g transform="translate(136, 136)">
+    <!-- Top Left (Image Editor Theme - Magenta/Red) -->
+    <rect x="0" y="0" width="96" height="96" rx="28" fill="none" stroke="#E94057" stroke-width="6" opacity="0.8"/>
+    <rect x="15" y="15" width="66" height="66" rx="18" fill="#E94057" opacity="0.15"/>
+    <circle cx="48" cy="48" r="12" fill="#E94057" opacity="0.8"/>
+
+    <!-- Top Right (Spirit Level Theme - Green) -->
+    <rect x="144" y="0" width="96" height="96" rx="28" fill="none" stroke="#10B981" stroke-width="6" opacity="0.8"/>
+    <rect x="159" y="15" width="66" height="66" rx="18" fill="#10B981" opacity="0.15"/>
+    <circle cx="192" cy="38" r="10" fill="#10B981" opacity="0.8"/>
+
+    <!-- Bottom Left (Decision Wheel Theme - Orange/Yellow) -->
+    <rect x="0" y="144" width="96" height="96" rx="28" fill="none" stroke="#FF9F43" stroke-width="6" opacity="0.8"/>
+    <rect x="15" y="159" width="66" height="66" rx="18" fill="#FF9F43" opacity="0.15"/>
+    <path d="M48 174 L36 210 L60 210 Z" fill="#FF9F43" opacity="0.8"/>
+
+    <!-- Bottom Right (White Noise Theme - Blue) -->
+    <rect x="144" y="144" width="96" height="96" rx="28" fill="none" stroke="#00b4d8" stroke-width="6" opacity="0.8"/>
+    <rect x="159" y="159" width="66" height="66" rx="18" fill="#00b4d8" opacity="0.15"/>
+    <path d="M174 192 Q183 180 192 192 T210 192" fill="none" stroke="#00b4d8" stroke-width="5" stroke-linecap="round" opacity="0.8"/>
+
+    <!-- Center Connection Hub with Octocat -->
+    <circle cx="120" cy="120" r="44" fill="#ffffff" filter="drop-shadow(0 8px 16px rgba(0,0,0,0.5))"/>
+    <path d="M120 100 C109 100 100 109 100 120 C100 128.8 105.7 136.3 113.6 139 C114.6 139.2 115 138.6 115 138 C115 137.5 115 135.8 115 133.8 C109.4 135 108.2 131.1 108.2 131.1 C107.3 128.8 106 128.2 106 128.2 C104.2 127 106.1 127 106.1 127 C108.1 127.1 109.2 129 109.2 129 C111 132.1 113.9 131.2 115.1 130.7 C115.3 129.4 115.8 128.5 116.4 128 C112 127.5 107.3 125.8 107.3 118.1 C107.3 115.9 108.1 114.1 109.4 112.7 C109.2 112.2 108.5 110.1 109.6 107.3 C109.6 107.3 111.3 106.8 115.1 109.3 C116.7 108.8 118.4 108.6 120.1 108.6 C121.8 108.6 123.5 108.8 125.1 109.3 C128.9 106.7 130.6 107.3 130.6 107.3 C131.7 110.1 131 112.2 130.8 112.7 C132.1 114.1 132.9 115.9 132.9 118.1 C132.9 125.8 128.2 127.5 123.7 128 C124.4 128.6 125.1 129.8 125.1 131.6 L125 138 C125 138.6 125.4 139.2 126.4 139 C134.3 136.3 140 128.8 140 120 C140 109 131 100 120 100 Z" fill="#1c2541"/>
+  </g>
+</svg>
