@@ -899,7 +899,7 @@ const reportHTML = `
   <h3>⛔ 網頁 PWA 無法做到的 3 大原生特徵</h3>
   <ul>
     <li><strong>持久背景運行與守護行程 (Persistent Background Services)</strong>：在 iOS 或 Android 上，原生應用程式可以請求常駐背景服務（如背景定位、VPN 連線、本地 Web 伺服器），而 PWA 當被使用者劃掉或螢幕鎖屏後，執行序會在數分鐘內被系統強制休眠。</li>
-    <li><strong>全局系統事件監聽</strong>：原生 App 能監聽手機音量鍵點擊、攔截簡訊驗證碼、偵測手機開機完成 (`BOOT_COMPLETED`) 並在背景自動啟動，PWA 則受限於安全沙盒，無法跨出頁面焦點進行監聽。</li>
+    <li><strong>全局系統事件監聽</strong>：原生 App 能監聽手機音量鍵點擊、攔截簡訊驗證碼、偵測手機開機完成 ('BOOT_COMPLETED') 並在背景自動啟動，PWA 則受限於安全沙盒，無法跨出頁面焦點進行監聽。</li>
     <li><strong>全局懸浮視窗 (Overlays)</strong>：Android 原生 App 可以在其他應用畫面上方繪製懸浮窗（如對話大頭貼），網頁 PWA 被嚴格封裝在瀏覽器之內，無法跨出視窗邊界。</li>
   </ul>
 `;
