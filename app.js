@@ -9,6 +9,7 @@ if ('serviceWorker' in navigator) {
 
 // Global State
 let allProjects = [];
+let pinnedProjects = JSON.parse(localStorage.getItem('pinned_projects')) || [];
 const GITHUB_USERNAME = 'BingFengHung';
 
 // Core Metadata for Featured Apps
@@ -293,8 +294,13 @@ function processAndRender(repos) {
     };
   });
   
-  // Sort projects: Core apps first, then others
+  // Sort projects: Pinned projects first, then core projects, then others
   allProjects.sort((a, b) => {
+    const aPinned = pinnedProjects.includes(a.name);
+    const bPinned = pinnedProjects.includes(b.name);
+    if (aPinned && !bPinned) return -1;
+    if (!aPinned && bPinned) return 1;
+    
     if (a.isCore && !b.isCore) return -1;
     if (!a.isCore && b.isCore) return 1;
     return 0;
@@ -321,7 +327,10 @@ function renderGrid(projects) {
       card.className = 'core-card';
       card.style.setProperty('--card-glow', project.color);
       
+      const isPinned = pinnedProjects.includes(project.name);
+      
       card.innerHTML = `
+        <button class="pin-btn ${isPinned ? 'active' : ''}" data-name="${project.name}" title="${isPinned ? '取消釘選' : '釘選至最上方'}">📌</button>
         <div class="card-header">
           <div class="card-icon" style="background: ${hexToRgba(project.color, 0.05)}; border-color: ${hexToRgba(project.color, 0.2)}; overflow: hidden; display: flex; align-items: center; justify-content: center;">
             <img src="${project.url}icon.svg" style="width: 100%; height: 100%; object-fit: contain; border-radius: 8px;" onerror="this.onerror=null; this.outerHTML='<span style=&quot;font-size: 1.8rem; color: ${project.color};&quot;>${project.icon}</span>';">
@@ -345,15 +354,20 @@ function renderGrid(projects) {
   } else {
     toolsGrid.className = 'icon-grid';
     projects.forEach(project => {
-      const card = document.createElement('a');
+      const card = document.createElement('div');
       card.className = 'icon-app-card';
-      card.href = project.url;
-      card.target = '_blank';
       card.style.setProperty('--card-glow', project.color);
       
+      const isPinned = pinnedProjects.includes(project.name);
+      
       card.innerHTML = `
-        <div class="icon-app-box" style="background: linear-gradient(135deg, ${hexToRgba(project.color, 0.25)}, ${hexToRgba(project.color, 0.05)}); border-color: ${hexToRgba(project.color, 0.35)}; overflow: hidden; display: flex; align-items: center; justify-content: center;">
-          <img src="${project.url}icon.svg" style="width: 100%; height: 100%; object-fit: contain; border-radius: 16px;" onerror="this.onerror=null; this.outerHTML='<span style=&quot;font-size: 2.2rem; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));&quot;>${project.icon}</span>';">
+        <div class="icon-app-box-wrapper">
+          <a href="${project.url}" target="_blank" style="text-decoration: none; display: block;">
+            <div class="icon-app-box" style="background: linear-gradient(135deg, ${hexToRgba(project.color, 0.25)}, ${hexToRgba(project.color, 0.05)}); border-color: ${hexToRgba(project.color, 0.35)}; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+              <img src="${project.url}icon.svg" style="width: 100%; height: 100%; object-fit: contain; border-radius: 16px;" onerror="this.onerror=null; this.outerHTML='<span style=&quot;font-size: 2.2rem; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));&quot;>${project.icon}</span>';">
+            </div>
+          </a>
+          <button class="icon-pin-btn ${isPinned ? 'active' : ''}" data-name="${project.name}" title="${isPinned ? '取消釘選' : '釘選至最上方'}">📌</button>
         </div>
         <span class="icon-app-title">${project.title}</span>
       `;
@@ -361,6 +375,44 @@ function renderGrid(projects) {
       toolsGrid.appendChild(card);
     });
   }
+}
+
+// Click Delegation for Pinned State
+toolsGrid.addEventListener('click', (e) => {
+  const pinBtn = e.target.closest('.pin-btn') || e.target.closest('.icon-pin-btn');
+  if (pinBtn) {
+    e.preventDefault();
+    e.stopPropagation();
+    const name = pinBtn.dataset.name;
+    togglePin(name);
+  }
+});
+
+function togglePin(name) {
+  const idx = pinnedProjects.indexOf(name);
+  if (idx > -1) {
+    pinnedProjects.splice(idx, 1);
+    showToast('已取消釘選專案');
+  } else {
+    pinnedProjects.push(name);
+    showToast('已將專案釘選至最上方');
+  }
+  localStorage.setItem('pinned_projects', JSON.stringify(pinnedProjects));
+  
+  // Re-sort allProjects
+  allProjects.sort((a, b) => {
+    const aPinned = pinnedProjects.includes(a.name);
+    const bPinned = pinnedProjects.includes(b.name);
+    if (aPinned && !bPinned) return -1;
+    if (!aPinned && bPinned) return 1;
+    
+    if (a.isCore && !b.isCore) return -1;
+    if (!a.isCore && b.isCore) return 1;
+    return 0;
+  });
+  
+  // Trigger search filter refresh
+  searchInput.dispatchEvent(new Event('input'));
 }
 
 // Search Filtering

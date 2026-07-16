@@ -699,6 +699,74 @@ main {
   color: var(--text);
 }
 
+/* Pinned App Badge and Buttons */
+.pin-btn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: transparent;
+  border: none;
+  font-size: 1.1rem;
+  cursor: pointer;
+  opacity: 0.25;
+  transition: all 0.25s ease;
+  z-index: 10;
+}
+
+.core-card:hover .pin-btn {
+  opacity: 0.65;
+}
+
+.pin-btn:hover {
+  opacity: 1 !important;
+  transform: scale(1.2) rotate(-15deg);
+}
+
+.pin-btn.active {
+  opacity: 1;
+  transform: scale(1.1);
+  filter: drop-shadow(0 0 6px var(--card-glow));
+}
+
+/* Icon view pin button wrapper & button */
+.icon-app-box-wrapper {
+  position: relative;
+}
+
+.icon-pin-btn {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: #111422;
+  border: 1px solid var(--border);
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  font-size: 0.72rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 15;
+}
+
+.icon-app-card:hover .icon-pin-btn, .icon-pin-btn.active {
+  opacity: 1;
+}
+
+.icon-pin-btn:hover {
+  transform: scale(1.25) rotate(-15deg);
+  border-color: rgba(255,255,255,0.3);
+}
+
+.icon-pin-btn.active {
+  background: var(--primary);
+  border-color: transparent;
+  box-shadow: 0 0 8px rgba(99, 102, 241, 0.5);
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   header {
