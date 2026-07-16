@@ -90,6 +90,13 @@ const CORE_APPS_METADATA = {
     desc: '個人網路連線診斷小助手。支援以 HTTP 測試多地節點的實時延遲（Ping）、查詢外網 IP 與網路運營商，並支援 Cloudflare DoH (DNS-over-HTTPS) 網域解析查詢。',
     icon: '📡',
     color: '#3b82f6'
+  },
+  'neon-physics-sandbox': {
+    title: '發光物理沙盒',
+    subtitle: 'Neon Physics Sandbox',
+    desc: '賽博朋克發光物理沙盒。利用 Matter.js 物理引擎，支援手繪霓虹障礙線、噴射水流、黑洞引力扭曲與空間傳送門，碰撞時能觸發合成器音階。',
+    icon: '☄️',
+    color: '#ff007f'
   }
 };
 
