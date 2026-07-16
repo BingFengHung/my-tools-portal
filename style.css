@@ -609,6 +609,96 @@ main {
   opacity: 1;
 }
 
+/* View Switcher */
+.view-switch {
+  display: flex;
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border);
+  padding: 4px;
+  border-radius: 20px;
+  margin-right: 8px;
+}
+
+.switch-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-dim);
+  width: 32px;
+  height: 32px;
+  border-radius: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+}
+
+.switch-btn.active {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+/* Icon Grid Mode */
+.icon-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  max-width: 360px;
+  margin: 0 auto;
+  padding: 10px 0;
+}
+
+.icon-app-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  text-decoration: none;
+  color: var(--text);
+  gap: 8px;
+  transition: transform 0.2s ease;
+}
+
+.icon-app-card:hover {
+  transform: translateY(-4px);
+}
+
+.icon-app-box {
+  width: 76px;
+  height: 76px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.icon-app-card:hover .icon-app-box {
+  transform: scale(1.05);
+  border-color: rgba(255,255,255,0.2);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.4), 0 0 15px var(--card-glow);
+}
+
+.icon-app-title {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-dim);
+  max-width: 90px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: color 0.2s;
+}
+
+.icon-app-card:hover .icon-app-title {
+  color: var(--text);
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   header {

@@ -60,6 +60,37 @@ const pwaModal = document.getElementById('pwa-modal');
 const modalClose = document.getElementById('modal-close');
 const toastMsg = document.getElementById('toast-msg');
 
+const btnViewCard = document.getElementById('view-card');
+const btnViewIcon = document.getElementById('view-icon');
+let currentView = localStorage.getItem('portal_view') || 'card';
+
+// Initialize View Switcher Style
+if (currentView === 'card') {
+  btnViewCard.classList.add('active');
+  btnViewIcon.classList.remove('active');
+} else {
+  btnViewIcon.classList.add('active');
+  btnViewCard.classList.remove('active');
+}
+
+btnViewCard.addEventListener('click', () => {
+  if (currentView === 'card') return;
+  currentView = 'card';
+  localStorage.setItem('portal_view', 'card');
+  btnViewCard.classList.add('active');
+  btnViewIcon.classList.remove('active');
+  searchInput.dispatchEvent(new Event('input'));
+});
+
+btnViewIcon.addEventListener('click', () => {
+  if (currentView === 'icon') return;
+  currentView = 'icon';
+  localStorage.setItem('portal_view', 'icon');
+  btnViewIcon.classList.add('active');
+  btnViewCard.classList.remove('active');
+  searchInput.dispatchEvent(new Event('input'));
+});
+
 const loadingState = document.getElementById('loading-state');
 const toolsGrid = document.getElementById('tools-grid');
 const emptyState = document.getElementById('empty-state');
@@ -283,32 +314,52 @@ function renderGrid(projects) {
   toolsGrid.style.display = 'grid';
   toolsGrid.innerHTML = '';
   
-  projects.forEach(project => {
-    const card = document.createElement('div');
-    card.className = 'core-card';
-    card.style.setProperty('--card-glow', project.color);
-    
-    card.innerHTML = `
-      <div class="card-header">
-        <div class="card-icon" style="background: ${hexToRgba(project.color, 0.15)}; border-color: ${hexToRgba(project.color, 0.3)}; color: ${project.color};">
-          <span style="font-size: 1.8rem;">${project.icon}</span>
+  if (currentView === 'card') {
+    toolsGrid.className = 'core-grid';
+    projects.forEach(project => {
+      const card = document.createElement('div');
+      card.className = 'core-card';
+      card.style.setProperty('--card-glow', project.color);
+      
+      card.innerHTML = `
+        <div class="card-header">
+          <div class="card-icon" style="background: ${hexToRgba(project.color, 0.15)}; border-color: ${hexToRgba(project.color, 0.3)}; color: ${project.color};">
+            <span style="font-size: 1.8rem;">${project.icon}</span>
+          </div>
+          <div class="card-title-group">
+            <h3>${project.title}</h3>
+            <p>${project.subtitle}</p>
+          </div>
         </div>
-        <div class="card-title-group">
-          <h3>${project.title}</h3>
-          <p>${project.subtitle}</p>
+        <p class="card-desc">${project.desc}</p>
+        <div class="card-actions">
+          <a href="${project.url}" class="action-btn play-btn">開啟工具</a>
+          <button class="action-btn qr-btn" data-url="${project.url}">QR Code</button>
         </div>
-      </div>
-      <p class="card-desc">${project.desc}</p>
-      <div class="card-actions">
-        <a href="${project.url}" class="action-btn play-btn">開啟工具</a>
-        <button class="action-btn qr-btn" data-url="${project.url}">QR Code</button>
-      </div>
-    `;
+      `;
+      
+      toolsGrid.appendChild(card);
+    });
     
-    toolsGrid.appendChild(card);
-  });
-  
-  initQRActions();
+    initQRActions();
+  } else {
+    toolsGrid.className = 'icon-grid';
+    projects.forEach(project => {
+      const card = document.createElement('a');
+      card.className = 'icon-app-card';
+      card.href = project.url;
+      card.style.setProperty('--card-glow', project.color);
+      
+      card.innerHTML = `
+        <div class="icon-app-box" style="background: linear-gradient(135deg, ${hexToRgba(project.color, 0.25)}, ${hexToRgba(project.color, 0.05)}); border-color: ${hexToRgba(project.color, 0.35)};">
+          <span style="font-size: 2.2rem; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));">${project.icon}</span>
+        </div>
+        <span class="icon-app-title">${project.title}</span>
+      `;
+      
+      toolsGrid.appendChild(card);
+    });
+  }
 }
 
 // Search Filtering
