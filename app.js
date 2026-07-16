@@ -483,6 +483,442 @@ function hexToRgba(hex, alpha) {
   return `rgba(255, 255, 255, ${alpha})`;
 }
 
+// --- Tab Navigation ---
+const navItems = document.querySelectorAll('.nav-item');
+const pageViews = document.querySelectorAll('.page-view');
+
+navItems.forEach(item => {
+  item.addEventListener('click', () => {
+    const target = item.dataset.target;
+    
+    // Update nav active state
+    navItems.forEach(nav => nav.classList.remove('active'));
+    item.classList.add('active');
+    
+    // Update page active state
+    pageViews.forEach(page => {
+      if (page.id === target) {
+        page.classList.add('active-page');
+      } else {
+        page.classList.remove('active-page');
+      }
+    });
+    
+    // Execute page-specific entry logic
+    if (target === 'page-dashboard') {
+      initDashboard();
+    } else if (target === 'page-diagnostics') {
+      runDiagnostics();
+    }
+  });
+});
+
+// --- Weather & Geolocation Widget ---
+async function initDashboard() {
+  initWeather();
+  initLedgerSummary();
+  initFocusHeatmap();
+}
+
+async function initWeather() {
+  const loadingEl = document.getElementById('weather-loading');
+  const infoBox = document.getElementById('weather-info');
+  const tempEl = document.getElementById('dash-weather-temp');
+  const iconEl = document.getElementById('dash-weather-icon');
+  const descEl = document.getElementById('dash-weather-desc');
+  const locEl = document.getElementById('dash-weather-loc');
+  const windEl = document.getElementById('dash-weather-wind');
+
+  loadingEl.style.display = 'block';
+  infoBox.style.display = 'none';
+
+  // Default location (Taipei)
+  let lat = 25.033;
+  let lon = 121.565;
+  let locName = '台北市 (預設)';
+
+  if (navigator.geolocation) {
+    try {
+      const position = await new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 5000 });
+      });
+      lat = position.coords.latitude;
+      lon = position.coords.longitude;
+      locName = `當前定位 (${lat.toFixed(2)}, ${lon.toFixed(2)})`;
+    } catch (err) {
+      console.warn('Geolocation failed or timed out. Using default (Taipei).', err);
+    }
+  }
+
+  try {
+    const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
+    const data = await res.json();
+    if (data && data.current_weather) {
+      const weather = data.current_weather;
+      tempEl.textContent = `${weather.temperature.toFixed(1)}°C`;
+      windEl.textContent = `${weather.windspeed.toFixed(1)} km/h`;
+      locEl.textContent = locName;
+
+      // Map weather codes
+      const codeMap = {
+        0: { icon: '☀️', desc: '晴朗無雲' },
+        1: { icon: '🌤️', desc: '晴時多雲' },
+        2: { icon: '⛅', desc: '多雲時陰' },
+        3: { icon: '☁️', desc: '陰天' },
+        45: { icon: '🌫️', desc: '有霧' },
+        48: { icon: '🌫️', desc: '濃霧' },
+        51: { icon: '🌧️', desc: '毛毛細雨' },
+        53: { icon: '🌧️', desc: '小雨' },
+        55: { icon: '🌧️', desc: '中雨' },
+        61: { icon: '🌧️', desc: '陣雨' },
+        63: { icon: '🌧️', desc: '大雨' },
+        71: { icon: '❄️', desc: '陣雪' },
+        73: { icon: '❄️', desc: '中雪' },
+        75: { icon: '❄️', desc: '大雪' },
+        95: { icon: '⛈️', desc: '雷陣雨' }
+      };
+
+      const weatherInfo = codeMap[weather.weathercode] || { icon: '⛅', desc: '多雲' };
+      iconEl.textContent = weatherInfo.icon;
+      descEl.textContent = weatherInfo.desc;
+
+      loadingEl.style.display = 'none';
+      infoBox.style.display = 'flex';
+    }
+  } catch (err) {
+    console.error('Weather fetch failed', err);
+    loadingEl.textContent = '獲取氣象資訊失敗，請確認網路連線。';
+  }
+}
+
+// --- Micro Ledger Stats ---
+function initLedgerSummary() {
+  const incomeEl = document.getElementById('dash-ledger-income');
+  const expenseEl = document.getElementById('dash-ledger-expense');
+  const percentEl = document.getElementById('dash-ledger-percent');
+  const fillBar = document.getElementById('dash-ledger-fill');
+
+  let totalIncome = 0;
+  let totalExpense = 0;
+
+  try {
+    const dataStr = localStorage.getItem('micro_ledger_transactions');
+    if (dataStr) {
+      const transactions = JSON.parse(dataStr);
+      transactions.forEach(t => {
+        const amt = parseFloat(t.amount) || 0;
+        if (t.type === 'income') {
+          totalIncome += amt;
+        } else if (t.type === 'expense') {
+          totalExpense += amt;
+        }
+      });
+    } else {
+      // Fallback preview values if no ledger data yet
+      totalIncome = 3650.00;
+      totalExpense = 1490.90;
+    }
+  } catch (e) {
+    console.error('Failed to load ledger stats', e);
+  }
+
+  incomeEl.textContent = `$${totalIncome.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  expenseEl.textContent = `$${totalExpense.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
+  const budgetMax = 30000;
+  const percent = Math.min(Math.round((totalExpense / budgetMax) * 100), 100);
+  percentEl.textContent = `${percent}%`;
+  fillBar.style.width = `${percent}%`;
+  
+  if (percent > 85) {
+    fillBar.style.background = 'linear-gradient(90deg, #ef4444, #f43f5e)';
+  } else if (percent > 60) {
+    fillBar.style.background = 'linear-gradient(90deg, #f59e0b, #eab308)';
+  } else {
+    fillBar.style.background = 'linear-gradient(90deg, var(--primary), var(--secondary))';
+  }
+}
+
+// --- Focus Heatmap ---
+function initFocusHeatmap() {
+  const container = document.getElementById('dash-heatmap');
+  container.innerHTML = '';
+
+  let sessions = [];
+  try {
+    const sessionStr = localStorage.getItem('focus_sessions');
+    if (sessionStr) {
+      sessions = JSON.parse(sessionStr);
+    }
+  } catch (e) {
+    console.error('Failed to parse focus sessions', e);
+  }
+
+  const sessionCountByDate = {};
+  sessions.forEach(s => {
+    const date = new Date(s.timestamp);
+    const dateStr = date.toISOString().split('T')[0];
+    sessionCountByDate[dateStr] = (sessionCountByDate[dateStr] || 0) + 1;
+  });
+
+  // Mock visual values if no sessions recorded yet
+  if (sessions.length === 0) {
+    const now = Date.now();
+    for (let i = 0; i < 28; i += 3) {
+      const mockDate = new Date(now - i * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+      sessionCountByDate[mockDate] = (i % 3) + 1;
+    }
+  }
+
+  const now = new Date();
+  for (let i = 27; i >= 0; i--) {
+    const d = new Date(now);
+    d.setDate(now.getDate() - i);
+    const dateStr = d.toISOString().split('T')[0];
+    const count = sessionCountByDate[dateStr] || 0;
+
+    let level = 0;
+    if (count > 0 && count <= 1) level = 1;
+    else if (count === 2) level = 2;
+    else if (count >= 3) level = 3;
+
+    const cell = document.createElement('div');
+    cell.className = `heatmap-cell level-${level}`;
+    
+    const displayDate = d.toLocaleDateString('zh-TW', { month: 'short', day: 'numeric' });
+    cell.title = `${displayDate}: 完成了 ${count} 次專注番茄鐘`;
+    
+    container.appendChild(cell);
+  }
+}
+
+// --- Hardware Diagnostics ---
+let orientationBound = false;
+
+function runDiagnostics() {
+  // 1. Gyroscope & Accelerometer
+  const statusGyro = document.getElementById('status-gyro');
+  if ('DeviceOrientationEvent' in window) {
+    statusGyro.textContent = '已支援 (感測中)';
+    statusGyro.className = 'diag-status supported';
+    
+    if (!orientationBound) {
+      window.addEventListener('deviceorientation', (e) => {
+        const xVal = e.beta ? e.beta.toFixed(1) + '°' : '0°';
+        const yVal = e.gamma ? e.gamma.toFixed(1) + '°' : '0°';
+        const zVal = e.alpha ? e.alpha.toFixed(1) + '°' : '0°';
+        document.getElementById('gyro-x').textContent = xVal;
+        document.getElementById('gyro-y').textContent = yVal;
+        document.getElementById('gyro-z').textContent = zVal;
+      });
+      orientationBound = true;
+    }
+  } else {
+    statusGyro.textContent = '不支援';
+    statusGyro.className = 'diag-status unsupported';
+  }
+
+  // 2. Vibration
+  const statusVibe = document.getElementById('status-vibe');
+  if ('vibrate' in navigator) {
+    statusVibe.textContent = '已支援';
+    statusVibe.className = 'diag-status supported';
+  } else {
+    statusVibe.textContent = '不支援 (iOS 禁用)';
+    statusVibe.className = 'diag-status unsupported';
+  }
+
+  // 3. Battery
+  const statusBattery = document.getElementById('status-battery');
+  const batteryLevel = document.getElementById('battery-level');
+  const batteryCharging = document.getElementById('battery-charging');
+
+  if ('getBattery' in navigator) {
+    navigator.getBattery().then(battery => {
+      statusBattery.textContent = '已支援';
+      statusBattery.className = 'diag-status supported';
+      
+      const updateBatteryUI = () => {
+        batteryLevel.textContent = `${Math.round(battery.level * 100)}%`;
+        batteryCharging.textContent = battery.charging ? '⚡ 充電中' : '🔌 未充電';
+      };
+      updateBatteryUI();
+      
+      battery.addEventListener('levelchange', updateBatteryUI);
+      battery.addEventListener('chargingchange', updateBatteryUI);
+    });
+  } else {
+    statusBattery.textContent = '不支援';
+    statusBattery.className = 'diag-status unsupported';
+  }
+
+  // 4. Network Info
+  const statusNetwork = document.getElementById('status-network');
+  const netType = document.getElementById('network-type');
+  const netSpeed = document.getElementById('network-speed');
+
+  const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+  if (conn) {
+    statusNetwork.textContent = '已支援';
+    statusNetwork.className = 'diag-status supported';
+    
+    const updateNetUI = () => {
+      netType.textContent = (conn.effectiveType || conn.type || '未知').toUpperCase();
+      netSpeed.textContent = conn.downlink ? conn.downlink + ' Mbps' : '未知';
+    };
+    updateNetUI();
+    conn.addEventListener('change', updateNetUI);
+  } else {
+    statusNetwork.textContent = '部分支援';
+    statusNetwork.className = 'diag-status supported';
+    netType.textContent = navigator.onLine ? 'ONLINE (WEB)' : 'OFFLINE';
+    netSpeed.textContent = '未知';
+  }
+
+  // 5. Wake Lock
+  const statusWake = document.getElementById('status-wakelock');
+  if ('wakeLock' in navigator) {
+    statusWake.textContent = '已支援';
+    statusWake.className = 'diag-status supported';
+  } else {
+    statusWake.textContent = '不支援';
+    statusWake.className = 'diag-status unsupported';
+  }
+
+  // 6. Standalone Mode
+  const statusStandalone = document.getElementById('status-standalone');
+  const isStandalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+  if (isStandalone) {
+    statusStandalone.textContent = 'PWA 獨立運行中';
+    statusStandalone.className = 'diag-status supported';
+  } else {
+    statusStandalone.textContent = '瀏覽器分頁運行';
+    statusStandalone.className = 'diag-status unsupported';
+  }
+
+  // 7. Cache Storage
+  const statusCache = document.getElementById('status-cache');
+  if ('caches' in window) {
+    statusCache.textContent = '已支援 (快取運作中)';
+    statusCache.className = 'diag-status supported';
+  } else {
+    statusCache.textContent = '不支援';
+    statusCache.className = 'diag-status unsupported';
+  }
+}
+
+// Bind Vibration test
+document.getElementById('vibrate-test-btn').addEventListener('click', () => {
+  if ('vibrate' in navigator) {
+    navigator.vibrate(200);
+    showToast('觸覺震動觸發成功！');
+  } else {
+    alert('您的裝置或瀏覽器不支援 Vibration API (例如 iOS 系統 Safari)。');
+  }
+});
+
+// Bind manual run diagnostics
+document.getElementById('run-diagnostics-btn').addEventListener('click', () => {
+  runDiagnostics();
+  showToast('硬體狀態已更新！');
+});
+
+// --- Native Comparison Report Modal ---
+const reportModal = document.getElementById('report-modal');
+const openReportBtn = document.getElementById('open-report-btn');
+const reportClose = document.getElementById('report-close');
+const reportContent = document.getElementById('report-content');
+
+const reportHTML = `
+  <h3>📲 為什麼我們需要對比 Native 平台？</h3>
+  <p>純網頁 Progressive Web App (PWA) 在跨平台一鍵下載與即時更新上有著絕佳優勢，但在調用手機底層硬體權限與背景執行上，與原生平台（iOS Xcode/Swift、Android Studio/Kotlin）有著實質的系統沙盒限制。</p>
+  
+  <table>
+    <thead>
+      <tr>
+        <th>功能項目</th>
+        <th>iOS PWA (Safari)</th>
+        <th>iOS Native (Xcode)</th>
+        <th>Android PWA (Chrome)</th>
+        <th>Android Native</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>加速度與陀螺儀</strong></td>
+        <td>🟢 支援</td>
+        <td>🟢 支援</td>
+        <td>🟢 支援</td>
+        <td>🟢 支援</td>
+      </tr>
+      <tr>
+        <td><strong>觸覺震動 (Vibration)</strong></td>
+        <td>🔴 禁用</td>
+        <td>🟢 支援</td>
+        <td>🟢 支援</td>
+        <td>🟢 支援</td>
+      </tr>
+      <tr>
+        <td><strong>藍牙存取 (Bluetooth)</strong></td>
+        <td>🔴 禁用</td>
+        <td>🟢 支援</td>
+        <td>🟢 支援</td>
+        <td>🟢 支援</td>
+      </tr>
+      <tr>
+        <td><strong>NFC 讀寫 (Web NFC)</strong></td>
+        <td>🔴 禁用</td>
+        <td>🟢 支援</td>
+        <td>🟢 支援</td>
+        <td>🟢 支援</td>
+      </tr>
+      <tr>
+        <td><strong>背景常駐執行與定時任務</strong></td>
+        <td>🔴 受限</td>
+        <td>🟢 支援</td>
+        <td>🔴 受限</td>
+        <td>🟢 支援</td>
+      </tr>
+      <tr>
+        <td><strong>防螢幕自動休眠鎖定</strong></td>
+        <td>🟢 支援</td>
+        <td>🟢 支援</td>
+        <td>🟢 支援</td>
+        <td>🟢 支援</td>
+      </tr>
+      <tr>
+        <td><strong>桌面小組件 (Widget)</strong></td>
+        <td>🔴 不支援</td>
+        <td>🟢 支援</td>
+        <td>🔴 不支援</td>
+        <td>🟢 支援</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>⛔ 網頁 PWA 無法做到的 3 大原生特徵</h3>
+  <ul>
+    <li><strong>持久背景運行與守護行程 (Persistent Background Services)</strong>：在 iOS 或 Android 上，原生應用程式可以請求常駐背景服務（如背景定位、VPN 連線、本地 Web 伺服器），而 PWA 當被使用者劃掉或螢幕鎖屏後，執行序會在數分鐘內被系統強制休眠。</li>
+    <li><strong>全局系統事件監聽</strong>：原生 App 能監聽手機音量鍵點擊、攔截簡訊驗證碼、偵測手機開機完成 (`BOOT_COMPLETED`) 並在背景自動啟動，PWA 則受限於安全沙盒，無法跨出頁面焦點進行監聽。</li>
+    <li><strong>全局懸浮視窗 (Overlays)</strong>：Android 原生 App 可以在其他應用畫面上方繪製懸浮窗（如對話大頭貼），網頁 PWA 被嚴格封裝在瀏覽器之內，無法跨出視窗邊界。</li>
+  </ul>
+`;
+
+openReportBtn.addEventListener('click', () => {
+  reportContent.innerHTML = reportHTML;
+  reportModal.classList.add('active');
+});
+
+reportClose.addEventListener('click', () => {
+  reportModal.classList.remove('active');
+});
+
+window.addEventListener('click', (e) => {
+  if (e.target === reportModal) {
+    reportModal.classList.remove('active');
+  }
+});
+
 // Initial Load
 window.addEventListener('load', () => {
   loadProjects();

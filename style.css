@@ -767,6 +767,398 @@ main {
   box-shadow: 0 0 8px rgba(99, 102, 241, 0.5);
 }
 
+/* Pages Views */
+.page-view {
+  display: none;
+  animation: fadeIn 0.4s ease;
+}
+
+.page-view.active-page {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Bottom Navigation Bar */
+.bottom-nav {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background: rgba(13, 11, 23, 0.45);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+  padding: 10px 16px;
+  border-radius: 40px;
+  width: 90%;
+  max-width: 480px;
+  z-index: 999;
+}
+
+.nav-item {
+  background: transparent;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  color: var(--text-dim);
+  cursor: pointer;
+  padding: 6px 16px;
+  border-radius: 20px;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  font-family: inherit;
+}
+
+.nav-item .nav-icon {
+  font-size: 1.3rem;
+  transition: transform 0.2s;
+}
+
+.nav-item .nav-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.nav-item:hover {
+  color: var(--text);
+}
+
+.nav-item:hover .nav-icon {
+  transform: translateY(-2px);
+}
+
+.nav-item.active {
+  color: #fff;
+  background: rgba(99, 102, 241, 0.25);
+  border: 1px solid rgba(99, 102, 241, 0.35);
+  box-shadow: 0 0 15px rgba(99, 102, 241, 0.2);
+}
+
+/* Dashboard Widgets styling */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+  margin-top: 24px;
+  padding-bottom: 80px;
+}
+
+.dash-card {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 24px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s;
+}
+
+.dash-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(255,255,255,0.12);
+}
+
+.dash-card h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 16px;
+  color: #fff;
+}
+
+.widget-loading {
+  color: var(--text-dim);
+  font-size: 0.88rem;
+  padding: 20px 0;
+  text-align: center;
+  font-style: italic;
+}
+
+/* Weather Box */
+.weather-info-box {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.weather-temp-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.weather-temp {
+  font-size: 2.8rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #fff, #9cbdff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.weather-icon {
+  font-size: 2.5rem;
+}
+
+.weather-desc {
+  font-size: 1rem;
+  color: var(--text-dim);
+}
+
+.weather-details {
+  display: flex;
+  justify-content: space-between;
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
+  margin-top: 4px;
+  font-size: 0.85rem;
+  color: var(--text-dim);
+}
+
+.weather-details strong {
+  color: #fff;
+}
+
+/* Ledger Widget */
+.ledger-stats {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.stat-item {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.02);
+  padding: 12px;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+}
+
+.stat-label {
+  display: block;
+  font-size: 0.72rem;
+  color: var(--text-dim);
+  margin-bottom: 4px;
+}
+
+.stat-value {
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.income .stat-value {
+  color: #10b981;
+}
+
+.expense .stat-value {
+  color: #ef4444;
+}
+
+.budget-progress-container {
+  font-size: 0.8rem;
+}
+
+.budget-label-row {
+  display: flex;
+  justify-content: space-between;
+  color: var(--text-dim);
+  margin-bottom: 6px;
+}
+
+.budget-bar {
+  background: rgba(255,255,255,0.08);
+  height: 8px;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.budget-fill {
+  background: linear-gradient(90deg, var(--primary), var(--secondary));
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.5s ease-in-out;
+}
+
+/* Heatmap Widget */
+.heatmap-container {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+  margin: 16px 0;
+}
+
+.heatmap-cell {
+  aspect-ratio: 1;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.2s, background-color 0.2s;
+}
+
+.heatmap-cell:hover {
+  transform: scale(1.15);
+  z-index: 2;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.15);
+}
+
+/* Heatmap Levels */
+.level-0 { background-color: rgba(255, 255, 255, 0.05); }
+.level-1 { background-color: rgba(99, 102, 241, 0.25); border: 1px solid rgba(99,102,241,0.2); }
+.level-2 { background-color: rgba(99, 102, 241, 0.55); }
+.level-3 { background-color: rgba(99, 102, 241, 0.85); box-shadow: 0 0 8px rgba(99,102,241,0.4); }
+
+.heatmap-legend {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  font-size: 0.72rem;
+  color: var(--text-dim);
+}
+
+.legend-cell {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+}
+
+/* Diagnostics Styles */
+.diagnostics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+  margin-top: 24px;
+  padding-bottom: 80px;
+}
+
+.diag-card {
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 160px;
+  transition: border-color 0.3s;
+}
+
+.diag-card:hover {
+  border-color: rgba(255,255,255,0.12);
+}
+
+.diag-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.diag-icon {
+  font-size: 1.3rem;
+}
+
+.diag-card h4 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.diag-desc {
+  font-size: 0.78rem;
+  color: var(--text-dim);
+  margin-bottom: 12px;
+  flex-grow: 1;
+}
+
+.diag-readings {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.78rem;
+  color: var(--text-dim);
+  background: rgba(0,0,0,0.2);
+  padding: 8px 12px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.diag-readings strong {
+  color: #fff;
+}
+
+.diag-status {
+  align-self: flex-start;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-dim);
+}
+
+.diag-status.supported {
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+.diag-status.unsupported {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.25);
+}
+
+/* Markdown report styling in modal */
+.report-content-body table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  font-size: 0.85rem;
+}
+
+.report-content-body th, .report-content-body td {
+  border: 1px solid var(--border);
+  padding: 8px 12px;
+  text-align: left;
+}
+
+.report-content-body th {
+  background: rgba(255, 255, 255, 0.04);
+  color: #fff;
+  font-weight: 600;
+}
+
+.report-content-body h3 {
+  color: #fff;
+  margin-top: 20px;
+  font-size: 1rem;
+}
+
+.report-content-body ul {
+  padding-left: 20px;
+  margin: 8px 0;
+}
+
+.report-content-body li {
+  margin-bottom: 8px;
+}
+
+.report-content-body strong {
+  color: #fff;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   header {

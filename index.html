@@ -40,33 +40,208 @@
       </div>
       <button class="icon-btn" id="refresh-btn" title="清除快取並刷新">🔄</button>
       <button class="pwa-btn" id="install-btn" style="display: none;">安裝 App</button>
-    </div>
   </header>
 
   <main>
-    <section class="section-container">
-      <div class="section-header-row">
-        <h2 class="section-title">✨ 我的線上工具箱 <span>My Tool Suite</span></h2>
-        <div class="search-wrapper">
-          <input type="text" id="search-input" placeholder="搜尋專案名稱...">
-          <span class="search-icon">🔍</span>
+    <!-- PAGE 1: HUB -->
+    <div id="page-hub" class="page-view active-page">
+      <section class="section-container">
+        <div class="section-header-row">
+          <h2 class="section-title">✨ 我的線上工具箱 <span>My Tool Suite</span></h2>
+          <div class="search-wrapper">
+            <input type="text" id="search-input" placeholder="搜尋專案名稱...">
+            <span class="search-icon">🔍</span>
+          </div>
         </div>
-      </div>
 
-      <div id="loading-state" class="loading-container">
-        <div class="spinner"></div>
-        <p>正在載入 GitHub Pages 專案...</p>
-      </div>
+        <div id="loading-state" class="loading-container">
+          <div class="spinner"></div>
+          <p>正在載入 GitHub Pages 專案...</p>
+        </div>
 
-      <!-- Combined Grid for ALL Tools -->
-      <div id="tools-grid" class="core-grid" style="display: none;">
-        <!-- Both core and fetched projects will be rendered here dynamically -->
-      </div>
+        <!-- Combined Grid for ALL Tools -->
+        <div id="tools-grid" class="core-grid" style="display: none;">
+          <!-- Both core and fetched projects will be rendered here dynamically -->
+        </div>
 
-      <div id="empty-state" class="empty-container" style="display: none;">
-        <p>沒有找到符合的專案</p>
-      </div>
-    </section>
+        <div id="empty-state" class="empty-container" style="display: none;">
+          <p>沒有找到符合的專案</p>
+        </div>
+      </section>
+    </div>
+
+    <!-- PAGE 2: DASHBOARD -->
+    <div id="page-dashboard" class="page-view">
+      <section class="section-container">
+        <h2 class="section-title">📊 數據儀表板 <span>Personal Dashboard</span></h2>
+        
+        <div class="dashboard-grid">
+          <!-- Weather Widget -->
+          <div class="dash-card weather-widget">
+            <h3>⛅ 即時天氣與定位</h3>
+            <div id="weather-loading" class="widget-loading">正在獲取地理定位與氣象資訊...</div>
+            <div id="weather-info" class="weather-info-box" style="display: none;">
+              <div class="weather-temp-row">
+                <span class="weather-temp" id="dash-weather-temp">--°C</span>
+                <span class="weather-icon" id="dash-weather-icon">☀️</span>
+              </div>
+              <p class="weather-desc" id="dash-weather-desc">晴朗</p>
+              <div class="weather-details">
+                <span>📍 位置: <strong id="dash-weather-loc">未知</strong></span>
+                <span>💨 風速: <strong id="dash-weather-wind">-- km/h</strong></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Micro Ledger Summary -->
+          <div class="dash-card ledger-widget">
+            <h3>💵 記帳本收支摘要</h3>
+            <div class="ledger-stats">
+              <div class="stat-item income">
+                <span class="stat-label">本月總收入</span>
+                <span class="stat-value" id="dash-ledger-income">$0.00</span>
+              </div>
+              <div class="stat-item expense">
+                <span class="stat-label">本月總支出</span>
+                <span class="stat-value" id="dash-ledger-expense">$0.00</span>
+              </div>
+            </div>
+            <div class="budget-progress-container">
+              <div class="budget-label-row">
+                <span>本月預算使用進度 (上限 $30,000)</span>
+                <span id="dash-ledger-percent">0%</span>
+              </div>
+              <div class="budget-bar">
+                <div class="budget-fill" id="dash-ledger-fill" style="width: 0%;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Focus Heatmap -->
+          <div class="dash-card heatmap-widget">
+            <h3>⏱️ 專注力歷史熱力圖 (最近 30 天)</h3>
+            <p class="widget-desc">每次在「專注白噪音」完成番茄鐘，將在此處記錄專注度天數拼圖。</p>
+            <div class="heatmap-container" id="dash-heatmap">
+              <!-- Dynamically rendered cells -->
+            </div>
+            <div class="heatmap-legend">
+              <span>少 (0次)</span>
+              <span class="legend-cell level-0"></span>
+              <span class="legend-cell level-1"></span>
+              <span class="legend-cell level-2"></span>
+              <span class="legend-cell level-3"></span>
+              <span>多 (3次以上)</span>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- PAGE 3: DIAGNOSTICS -->
+    <div id="page-diagnostics" class="page-view">
+      <section class="section-container">
+        <div class="section-header-row">
+          <h2 class="section-title">🔬 行動硬體檢測儀 <span>Hardware & API Diagnostics</span></h2>
+          <button class="glass-btn" id="run-diagnostics-btn">一鍵檢測</button>
+        </div>
+
+        <div class="diagnostics-grid">
+          <!-- Gyroscope -->
+          <div class="diag-card" id="diag-gyro">
+            <div class="diag-header">
+              <span class="diag-icon">⚖️</span>
+              <h4>加速規與陀螺儀</h4>
+            </div>
+            <p class="diag-desc">檢測手機的三軸加速度與姿態方向感測器。</p>
+            <div class="diag-readings" id="gyro-readings">
+              <span>X軸 (Beta): <strong id="gyro-x">0°</strong></span>
+              <span>Y軸 (Gamma): <strong id="gyro-y">0°</strong></span>
+              <span>Z軸 (Alpha): <strong id="gyro-z">0°</strong></span>
+            </div>
+            <div class="diag-status" id="status-gyro">未偵測</div>
+          </div>
+
+          <!-- Vibration -->
+          <div class="diag-card" id="diag-vibe">
+            <div class="diag-header">
+              <span class="diag-icon">📳</span>
+              <h4>觸覺震動 API</h4>
+            </div>
+            <p class="diag-desc">測試手機的震動馬達，iOS 系統可能完全不支援。</p>
+            <button class="action-btn" id="vibrate-test-btn" style="padding: 6px 12px; margin-top: 10px;">震動測試</button>
+            <div class="diag-status" id="status-vibe">未偵測</div>
+          </div>
+
+          <!-- Battery -->
+          <div class="diag-card" id="diag-battery">
+            <div class="diag-header">
+              <span class="diag-icon">🔋</span>
+              <h4>電池狀態</h4>
+            </div>
+            <p class="diag-desc">讀取系統目前電量與充電連接狀態。</p>
+            <div class="diag-readings" id="battery-readings">
+              <span>電量比例: <strong id="battery-level">--%</strong></span>
+              <span>充電狀態: <strong id="battery-charging">--</strong></span>
+            </div>
+            <div class="diag-status" id="status-battery">未偵測</div>
+          </div>
+
+          <!-- Network -->
+          <div class="diag-card" id="diag-network">
+            <div class="diag-header">
+              <span class="diag-icon">📡</span>
+              <h4>網路狀態與速度</h4>
+            </div>
+            <p class="diag-desc">獲取目前的網路連接類型與下載頻寬估計。</p>
+            <div class="diag-readings" id="network-readings">
+              <span>連線類型: <strong id="network-type">--</strong></span>
+              <span>頻寬估計: <strong id="network-speed">-- Mbps</strong></span>
+            </div>
+            <div class="diag-status" id="status-network">未偵測</div>
+          </div>
+
+          <!-- Wake Lock -->
+          <div class="diag-card" id="diag-wakelock">
+            <div class="diag-header">
+              <span class="diag-icon">💡</span>
+              <h4>防螢幕休眠鎖定</h4>
+            </div>
+            <p class="diag-desc">螢幕自動喚醒鎖定 (Screen Wake Lock) API 支援度。</p>
+            <div class="diag-status" id="status-wakelock">未偵測</div>
+          </div>
+
+          <!-- Standalone -->
+          <div class="diag-card" id="diag-standalone">
+            <div class="diag-header">
+              <span class="diag-icon">📱</span>
+              <h4>PWA 獨立運行模式</h4>
+            </div>
+            <p class="diag-desc">檢測目前是否正以 Standalone PWA 形式啟動。</p>
+            <div class="diag-status" id="status-standalone">未偵測</div>
+          </div>
+
+          <!-- Cache Storage -->
+          <div class="diag-card" id="diag-cache">
+            <div class="diag-header">
+              <span class="diag-icon">📦</span>
+              <h4>本機 Cache Storage</h4>
+            </div>
+            <p class="diag-desc">檢測瀏覽器的 Service Worker 離線快取儲存空間。</p>
+            <div class="diag-status" id="status-cache">未偵測</div>
+          </div>
+
+          <!-- Compare Card -->
+          <div class="diag-card compare-card-info" style="border: 1px dashed var(--primary); background: rgba(99, 102, 241, 0.05);">
+            <div class="diag-header">
+              <span class="diag-icon">📑</span>
+              <h4>對比 Native 平台差異</h4>
+            </div>
+            <p class="diag-desc" style="font-size: 0.82rem; line-height: 1.4;">了解純網頁 Web 平台相較於原生 (iOS Xcode/Swift, Android Studio) 缺少了哪些系統級功能與硬件權限限制。</p>
+            <button class="action-btn play-btn" id="open-report-btn" style="margin-top: 10px; font-size: 0.8rem; padding: 6px 12px;">查看完整對比報告</button>
+          </div>
+        </div>
+      </section>
+    </div>
   </main>
 
   <!-- PWA iOS Manual Guide Dialog -->
@@ -103,6 +278,32 @@
       <p id="qr-text" style="color: var(--text-dim); font-size: 0.85rem; margin-top: 10px; word-break: break-all;"></p>
     </div>
   </div>
+
+  <!-- Native Report Modal -->
+  <div class="modal" id="report-modal">
+    <div class="modal-content" style="max-width: 700px; max-height: 80vh; overflow-y: auto; text-align: left;">
+      <button class="modal-close" id="report-close">✕</button>
+      <h2 style="font-size: 1.3rem; margin-bottom: 20px; text-align: center; border-bottom: 1px solid var(--border); padding-bottom: 12px; display: flex; align-items: center; justify-content: center; gap: 8px;">📑 PWA vs Native App 系統功能差異報告</h2>
+      <div id="report-content" class="report-content-body" style="font-size: 0.9rem; line-height: 1.6; color: var(--text-dim);">
+        <!-- Content will be dynamically inserted here -->
+      </div>
+    </div>
+  </div>
+
+  <nav class="bottom-nav">
+    <button class="nav-item active" data-target="page-hub">
+      <span class="nav-icon">🎴</span>
+      <span class="nav-label">工具箱</span>
+    </button>
+    <button class="nav-item" data-target="page-dashboard">
+      <span class="nav-icon">📊</span>
+      <span class="nav-label">儀表板</span>
+    </button>
+    <button class="nav-item" data-target="page-diagnostics">
+      <span class="nav-icon">🔬</span>
+      <span class="nav-label">檢測儀</span>
+    </button>
+  </nav>
 
   <div class="toast" id="toast-msg">已更新快取資料！</div>
 
