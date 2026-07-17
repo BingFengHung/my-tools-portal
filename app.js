@@ -111,6 +111,13 @@ const CORE_APPS_METADATA = {
     desc: '小小牛頓槓桿平衡物理遊戲。結合 Matter.js 剛體引擎，拖曳兔子、豬、大象等可愛動物砝碼放置在天平不同刻度上，實時計算力矩並動態平衡，內建 6 大謎題。',
     icon: '⚖️',
     color: '#f59e0b'
+  },
+  'prompt-generator': {
+    title: '專案提示詞產生器',
+    subtitle: 'PWA Prompt Generator',
+    desc: 'PWA 多專案提示詞工具。視覺化配置 GitHub 帳號與密鑰，自訂多個 Repo 的名稱、圖示與主題色，一鍵產生符合 CLI 規格的 Markdown 提示詞。',
+    icon: '⚡',
+    color: '#7f00ff'
   }
 };
 
