@@ -97,6 +97,20 @@ const CORE_APPS_METADATA = {
     desc: '賽博朋克發光物理沙盒。利用 Matter.js 物理引擎，支援手繪霓虹障礙線、噴射水流、黑洞引力扭曲與空間傳送門，碰撞時能觸發合成器音階。',
     icon: '☄️',
     color: '#ff007f'
+  },
+  'kids-coding-maze': {
+    title: '兒童程式迷宮',
+    subtitle: 'Kids Coding Quest',
+    desc: '積木程式邏輯啟蒙遊戲。小孩子可以用前進、轉彎、重複等動作積木拼湊出程式指令，引導小機器人在霓虹迷宮中收集寶石，內建 8 個關卡與音效。',
+    icon: '🤖',
+    color: '#10b981'
+  },
+  'kids-balance-lab': {
+    title: '槓桿平衡實驗室',
+    subtitle: 'Kids Balance Physics Lab',
+    desc: '小小牛頓槓桿平衡物理遊戲。結合 Matter.js 剛體引擎，拖曳兔子、豬、大象等可愛動物砝碼放置在天平不同刻度上，實時計算力矩並動態平衡，內建 6 大謎題。',
+    icon: '⚖️',
+    color: '#f59e0b'
   }
 };
 
